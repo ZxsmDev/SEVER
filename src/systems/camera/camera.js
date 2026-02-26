@@ -27,8 +27,8 @@ export default class Camera {
     this.y = this.game.math.lerp(this.y, targetY, 0.3);
 
     // Clamp to level bounds
-    const levelWidth = this.game.level.data.size.width * this.game.level.scaleFactor;
-    const levelHeight = this.game.level.data.size.height * this.game.level.scaleFactor;
+    const levelWidth = this.game.level.data.size.width;
+    const levelHeight = this.game.level.data.size.height;
     this.x = this.game.math.clamp(this.x, 0, levelWidth - this.width);
     this.y = this.game.math.clamp(this.y, 0, levelHeight - this.height);
 

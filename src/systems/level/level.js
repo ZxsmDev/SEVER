@@ -24,27 +24,11 @@ export default class Level {
     };
 
     this.color = {
-      ground: "#1d1103",
-      platform: "#56381a",
-      wall: "#111111",
-      door: "#57391a",
+      ground: "#000000",
+      platform: "#3F3F3F",
+      door: "#2a527c",
       ramp: "#000000",
-
-      // For testing:
-      // ground: "#000000",
-      // platform: "#3F3F3F",
     };
-
-    /* Global level scale factor to convert from level units to 
-    pixels, need to determine factors for other sizes */
-
-    // this.scaleFactor = {
-    //   small: ?,
-    //   medium: ?,
-    //   large: 2,
-    //   xl: ?,
-    // };
-    this.scaleFactor = 1; // TEMP
   }
   renderGeometry() {
     Object.values(this.collision).forEach((group) => {
@@ -77,40 +61,40 @@ export default class Level {
       switch (obj.type) {
         case "ground":
           const groundRect = new Rect(
-            obj.x * this.scaleFactor,
-            obj.y * this.scaleFactor,
-            obj.width * this.scaleFactor,
-            obj.height * this.scaleFactor,
+            obj.x,
+            obj.y,
+            obj.width,
+            obj.height,
             this.color.ground,
           );
           this.collision.rects.push(groundRect);
           break;
         case "platform":
           const platformRect = new Rect(
-            obj.x * this.scaleFactor,
-            obj.y * this.scaleFactor,
-            obj.width * this.scaleFactor,
-            obj.height * this.scaleFactor / 2,
+            obj.x,
+            obj.y,
+            obj.width,
+            (obj.height) / 2,
             this.color.platform,
           );
           this.collision.rects.push(platformRect);
           break;
         case "wall":
           const wallRect = new Rect(
-            obj.x * this.scaleFactor,
-            obj.y * this.scaleFactor,
-            obj.width * this.scaleFactor,
-            obj.height * this.scaleFactor,
+            obj.x,
+            obj.y,
+            obj.width,
+            obj.height,
             this.color.wall,
           );
           this.collision.rects.push(wallRect);
           break;
         case "ramp":
           const ramp = new Ramp(
-            obj.x * this.scaleFactor,
-            obj.y * this.scaleFactor,
-            obj.width * this.scaleFactor,
-            obj.height * this.scaleFactor,
+            obj.x,
+            obj.y,
+            obj.width,
+            obj.height,
             obj.slope === 1 ? "up" : "down",
             this.color.ramp,
           );
@@ -118,10 +102,10 @@ export default class Level {
           break;
         case "interactable":
           const interactable = new Interactable(
-            obj.x * this.scaleFactor,
-            obj.y * this.scaleFactor,
-            obj.width * this.scaleFactor,
-            obj.height * this.scaleFactor,
+            obj.x,
+            obj.y,
+            obj.width,
+            obj.height,
             this.color.door,
           );
           this.game.interaction.addInteractable(interactable, obj.interaction);
@@ -129,8 +113,8 @@ export default class Level {
           break;
         case "radial":
           const radial = new Radial(
-            obj.x * this.scaleFactor,
-            obj.y * this.scaleFactor,
+            obj.x,
+            obj.y,
             obj.radius,
             obj.color || "#FF0000",
           );
@@ -147,8 +131,8 @@ export default class Level {
     this.enemies.forEach((enemyData) => {
       const enemy = new EnemyClass(
         this.game,
-        enemyData.spawn.x * this.scaleFactor,
-        enemyData.spawn.y * this.scaleFactor,
+        enemyData.spawn.x,
+        enemyData.spawn.y,
         25, // Default width
         50, // Default height
       );

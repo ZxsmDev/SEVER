@@ -1,6 +1,6 @@
-# ORDER IS MERCY
+# GAME_NAME
 
-> A bleak platformer metroidvania about obedience, decay, and the quiet violence of systems that never stop running.
+> A fast-paced 2D action roguelike about enforcement, escalation, and the cost of efficient violence.
 
 ---
 
@@ -13,10 +13,11 @@
 - [Player Mechanics](#player-mechanics)
   - [Movement](#movement)
   - [Combat](#combat)
+- [Run Structure](#run-structure)
 - [Systems & Progression](#systems--progression)
-- [World Structure](#world-structure)
-- [Narrative Structure](#narrative-structure)
-- [Endings](#endings)
+- [Enemy Design](#enemy-design)
+- [Boss Philosophy](#boss-philosophy)
+- [Meta Progression](#meta-progression)
 - [Visual & Audio Direction](#visual--audio-direction)
 - [Technical Architecture](#technical-architecture)
 - [Inspirations](#inspirations)
@@ -28,73 +29,78 @@
 
 ## OVERVIEW
 
-**ORDER IS MERCY** is a dark, atmospheric 2D platformer with precision combat and traversal, inspired by  
-_Hollow Knight_, but grounded in themes of **bureaucracy, decay, and enforced purpose**.
+**GAME_NAME** is a room-based 2D action roguelike built in HTML Canvas and vanilla JavaScript.
 
-This is not a heroic journey.  
-The world does not want saving.  
-It wants **processing**.
+Each run places you inside a procedurally assembled enforcement district controlled by a failing administrative regime. Your job is simple:
 
-You are not chosen.  
-You are **assigned**.
+Clear resistance.  
+Process anomalies.  
+Advance the sector.
+
+You will not finish the system.  
+You will escalate within it.
 
 ---
 
 ## DESIGN PILLARS
 
-1. **Obedience Is a Mechanic**
-   - Progress is tied to compliance, not skill alone.
-   - The game tracks _how well you follow instructions_, not how moral you are.
+### 1. Speed Over Sprawl
+No sprawling map.  
+No backtracking labyrinth.
 
-2. **Movement Is Expression**
-   - Traversal should feel fluid, fast, and empowering.
-   - Combat difficulty comes from **positioning**, not raw numbers.
+Combat rooms. Escalation. Choice nodes. Boss.
 
-3. **The System Outlives You**
-   - The world does not care about rebellion.
-   - Even failure is documented and archived.
-
-4. **No Clean Endings**
-   - Every ending is a loss.
-   - The only variable is **who benefits from it**.
+Tight, replayable loops.
 
 ---
 
-## CORE FANTASY
+### 2. Aggression Is Rewarded
+Standing still gets you killed.
 
-You are a low-ranking **clerical enforcer** operating within a city-state governed entirely by an ancient administrative machine known only as **The Bureau**.
+The system rewards:
+- Mobility
+- Precision
+- Controlled risk
 
-Every action requires:
+---
 
-- Authorization
-- Documentation
-- Justification
+### 3. Builds Over Branches
+Player power comes from:
+- Temporary run modifiers
+- Synergistic upgrades
+- Trade-offs, not linear growth
 
-Including violence.  
-Including death.  
-Including your own.
+---
+
+### 4. Escalation Is the Story
+Each floor grows harsher:
+- Faster enemies
+- Denser rooms
+- Modifier stacking
+
+The system adapts to efficiency.
 
 ---
 
 ## CORE LOOP
 
-> **Explore → Receive Directives → Execute Tasks → File Results → Adjust Compliance → World Reacts**
+> Enter Run → Clear Combat Room → Choose Reward → Escalate Difficulty → Face Sector Boss → Extract → Permanent Unlocks
 
-### Directive Flow
+### Per Room
 
-1. Receive a Directive from a Ministry terminal or NPC
-2. Carry out the task (combat, traversal, investigation)
-3. Return proof or documentation
-4. Receive rewards, penalties, or amendments
-5. World state subtly shifts
+1. Enter sealed combat arena  
+2. Survive waves or eliminate targets  
+3. Room locks until cleared  
+4. Select one of 2–3 upgrades  
+5. Proceed to next node  
 
-### Player Tension
+### Run Ends When
 
-- High compliance = easier access, colder world
-- Low compliance = resistance, instability, corruption
-  - (Low compliance essentially blocks upgrades - in an effort to encourage obedience)
+- Health reaches zero  
+- Final boss defeated  
+- You voluntarily extract (rare mechanic)  
 
-There is **no neutral state**.
+Runs are designed for **15–30 minutes max**.
 
 ---
 
@@ -102,126 +108,142 @@ There is **no neutral state**.
 
 ### Movement
 
-- **Double Jump**
-  - Midair correction framed as an “approved action”
-  - Visualized via a stamped burst of energy
+Built for responsiveness and flow.
 
 - **Dash**
-  - Ground dash behaves like a short sprint
-  - Air dash decays rapidly, forcing intentional use
-  - Down dash, and diagonal down dash for interest
-  - Combat wise, high compliance unlocks i-frame upgrade
+  - Fast, short invulnerability window
+  - Directional
+  - Core survival mechanic
 
-- **Wall Cling**
-  - Slow descent
-  - Resets jump cooldown
-  - Limited by stamina/focus to prevent infinite climbs
+- **Double Jump**
+  - Air correction tool
 
-Movement should feel _cleaner than combat_.
+- **Ground Sprint**
+  - High-risk positioning tool
+
+Movement remains the most polished system.
+
+Combat difficulty comes from positioning, not stat inflation.
 
 ---
 
 ### Combat
 
-- **Melee Combat**
-  - Fast, precise strikes
-  - Short recovery windows
-  - Enemies punish panic inputs
+Fast. Clean. High consequence.
 
-- **Projectile Tools**
-  - High lethality, limited ammo
-  - Enemies obey the same rules
-  - Designed to complement melee, not replace it
+#### Primary Attack
+- Melee combo chain
+- Cancel into dash
+- Short recovery window
 
-- **Execution Attacks**
-  - Triggered when enemy morale breaks
-  - Cinematic, brutal, costly
-  - Lowers compliance as punishment for excess
-    - (While high compliance is typically sought after, it can be "channeled" and lost to aid in combat)
+#### Secondary Ability
+- Ranged or utility skill
+- Limited charges or cooldown
+
+#### Ultimate
+- Charged by damage dealt or taken
+- Screen-clearing effect
+- High risk, high reward
+
+---
+
+## RUN STRUCTURE
+
+Each run consists of:
+
+### 1. Sector Entry
+- Basic enemies
+- Minimal modifiers
+- Establish build direction
+
+### 2. Escalation Layer
+- Elite enemy variants
+- Environmental hazards
+- First synergy spike
+
+### 3. Distortion Layer
+- Stacked room modifiers
+- Faster spawns
+- Mini-boss encounter
+
+### 4. Sector Boss
+- Pattern-heavy fight
+- Designed around dash mastery
+- Tests build coherence
 
 ---
 
 ## SYSTEMS & PROGRESSION
 
-| System           | Description                               |
-| ---------------- | ----------------------------------------- |
-| Compliance Meter | Tracks obedience to directives            |
-| Permits & Forms  | Gate abilities, areas, upgrades           |
-| Paper Clips      | Base currency (valuable due to scarcity)  |
-| Seals            | Permanent progression markers             |
-| Records          | Save system disguised as archival backups |
+### In-Run Systems
 
-Progression is not about growth.  
-It’s about **authorization**.
+| System     | Description                                  |
+|------------|----------------------------------------------|
+| Integrity  | Player health                                |
+| Clearance  | Currency gained per room                     |
+| Directives | Run modifiers (buffs/debuffs)                |
+| Escalation | Global difficulty scaler                     |
 
 ---
 
-## WORLD STRUCTURE
+### Upgrade Types
 
-### The Ministry (Hub)
+- Flat stat boosts  
+- Conditional damage (e.g., bonus after dash)  
+- On-hit effects  
+- Movement alterations  
+- Risk modifiers (high damage, low health builds)  
 
-- Central administrative complex
-- Cold, rigid, sterile
-- Source of most Directives
-
-### Outer Sectors
-
-- Abandoned bureaucratic projects
-- Collapsed offices, overgrown archives
-- Populated by forgotten workers and malformed enforcers
-
-### Sanctums
-
-- Optional challenge zones
-- Contain outlawed knowledge
-- No Directives, no guidance
-
-### The Citadel
-
-- Final region
-- Pristine, empty, silent
-- Where the system reveals its truth
+Build depth comes from stacking interactions.
 
 ---
 
-## NARRATIVE STRUCTURE
+## ENEMY DESIGN
 
-### Act I — Compliance
+Enemies are simple individually, dangerous in groups.
 
-- You follow orders
-- The system rewards efficiency
-- The world feels stable but lifeless
+Types include:
 
-### Act II — Realization
+- **Chaser** – closes distance rapidly  
+- **Sniper** – slow windup projectile  
+- **Suppressor** – area denial  
+- **Splitter** – divides on death  
+- **Shield Unit** – directional blocking  
 
-- Directives contradict themselves
-- NPC dialogue loops and degrades
-- You discover there is no ruling authority
-
-### Act III — Collapse
-
-- The system begins correcting _you_
-- Areas destabilize
-- The game actively resists player agency
-  - Input inversion, flipped camera etc.
+Each enemy pressures a different player habit.
 
 ---
 
-## ENDINGS
+## BOSS PHILOSOPHY
 
-1. **Compliance Complete**
-   - Perfect obedience
-   - You are promoted into irrelevance
+Bosses are not HP sponges.
 
-2. **Anomaly Logged**
-   - Rebellion acknowledged
-   - Filed, categorized, ignored
+They test:
 
-3. **Overwrite**
-   - You assume control
-   - The system persists, now bearing your name
+- Dash timing  
+- Spatial awareness  
+- Build viability  
 
-There is no victory state.
+Bosses escalate patterns over phases.
+
+No cutscenes.  
+Minimal downtime.  
+Immediate reset on death.
+
+---
+
+## META PROGRESSION
+
+Between runs, players unlock:
+
+- New upgrade pools  
+- Weapon variants  
+- Starting bonuses  
+- Cosmetic changes  
+
+Meta progression increases **variety**, not raw power.
+
+Skilled players can win early.
 
 ---
 
@@ -229,140 +251,124 @@ There is no victory state.
 
 ### Visuals
 
-- Muted palette, near-monochrome - very brown/tan and lifeless
-- Red stamps and seals as UI accents
-- Subtle world glitches tied to compliance
+- High contrast  
+- Strong silhouettes  
+- Minimalist arenas  
+- UI integrated into world space  
+
+Runs must remain readable at high speed.
+
+---
 
 ### Audio
 
-- Mechanical ambience
-- Distant machinery
-- Music fades under heavy bureaucracy moments
+- Impact-heavy combat sounds  
+- Subtle escalating music layers  
+- Audio cues for dash timing and elite spawns  
 
-Silence is intentional.
+Clarity over ambience.
 
 ---
 
 ## TECHNICAL ARCHITECTURE
 
-- HTML Canvas
-- Vanilla JavaScript
-- Centralized GameManager architecture
-- Entity-based system (Player, Enemies, NPCs)
-- State-driven scene management
+Designed for scalability within web constraints.
 
-Structure prioritizes **maintainability over speed**.
+- HTML Canvas  
+- Vanilla JavaScript  
+- Centralized GameManager  
+- State-driven architecture  
+- Entity-based modular structure  
+- Object pooling for performance  
+- Deterministic room generation  
+
+No external engine.  
+No heavy frameworks.  
+
+Optimized for portfolio visibility and code clarity.
 
 ---
 
 ## INSPIRATIONS
 
-- _Hollow Knight_
-  - Environmental storytelling, melancholic tone, a world decaying long after its purpose has been forgotten.
-- _1984_
-  - Totalitarianism, bureaucratic control, and the weaponization of language to suppress individuality and dissent.
-- _Control_
-  - Institutional surrealism, hostile architecture, and the idea that systems persist regardless of human cost.
-- _Rain World_
-  - Survival, inevitability, and the indifference of the world to player intent.
-- _Hollow Knight: Silksong_
-  - A dying world in motion — collapse as a process, not an event.
+- *Hades* — run-based escalation and build synergies  
+- *Dead Cells* — responsive movement and combat flow  
+- *ULTRAKILL* — readable chaos and fast paced combat
+- *Risk of Rain* — scaling pressure and stacking modifiers  
 
 ---
 
 ## DEVELOPMENT ROADMAP
 
-### Phase 1 — Foundation
+### Phase 1 — Combat Core
+- Finalize movement feel  
+- Dash polish  
+- Basic melee chain  
+- 3 enemy types  
+- Room lock system  
 
-- Core movement
-- Basic combat
-- Scene/state system
+### Phase 2 — Run Structure
+- Node map generation  
+- Reward selection system  
+- Upgrade framework  
+- Mini-boss implementation  
 
-### Phase 2 — Systems
+### Phase 3 — Depth
+- 10+ upgrade types  
+- 6+ enemy types  
+- Elite variants  
+- Full boss encounter  
 
-- Directives
-- Compliance tracking
-- Save/record system
-
-### Phase 3 — Content
-
-- World regions
-- Enemy types
-- Boss encounters
-
-### Phase 4 — Narrative & Polish
-
-- Endings
-- Environmental storytelling
-- Audio/visual refinement
+### Phase 4 — Polish
+- Visual clarity pass  
+- Performance optimization  
+- Meta progression system  
+- UI refinement  
+- Sound integration  
 
 ---
 
 ## TASK CHECKLIST
 
 ### Core Engine
-
-- [x] Finalize GameManager architecture
-- [ ] Implement full StateManager
-- [x] Modularize Entity system
-- [x] Camera system with smoothing
-- [x] Collision refinement
+- [x] GameManager architecture  
+- [x] Collision system  
+- [x] Camera system  
+- [ ] Object pooling  
+- [ ] Deterministic RNG seed system  
 
 ### Player
-
-- [x] Finalize movement tuning
-- [x] Dash decay logic
-- [ ] Wall cling stamina
-- [ ] Animation state machine
-- [ ] Hitbox / hurtbox separation
+- [x] Dash logic  
+- [x] Double jump  
+- [ ] Attack combo system  
+- [ ] Hurtbox / hitbox separation  
+- [ ] Invulnerability frames  
 
 ### Combat
+- [x] Enemy base class  
+- [ ] Wave spawner  
+- [ ] Elite modifier system  
+- [ ] Boss framework  
+- [ ] Damage feedback system  
 
-- [ ] Melee combo logic
-- [ ] Parry / counter window
-- [ ] Projectile ammo system
-- [ ] Enemy morale system
-- [ ] Execution animations
+### Run Systems
+- [ ] Room generator  
+- [ ] Reward selection UI  
+- [ ] Upgrade stacking logic  
+- [ ] Escalation scaler  
+- [ ] Run summary screen  
 
-### Systems
+### Meta
+- [ ] Unlock system  
+- [ ] Persistent save  
+- [ ] Starting loadout variants  
 
-- [ ] Directive generator
-- [ ] Compliance meter logic
-- [ ] Permit gating
-- [ ] Ink & Seal economy
-- [ ] Save/record terminals
+---
 
-### World
-
-- [ ] Ministry hub
-- [ ] Outer Sector tilesets
-- [ ] Sanctum challenge rooms
-- [ ] Citadel layout
-- [ ] Environmental hazards
-
-### Enemies
-
-- [ ] Basic enforcer
-- [ ] Ranged unit
-- [ ] Corrupted worker
-- [ ] Elite bureaucrat
-- [ ] Boss framework
-
-### Narrative
-
-- [ ] Directive text pool
-- [ ] NPC dialogue system
-- [ ] World-state dialogue variants
-- [ ] Ending triggers
-- [ ] Ending cutscenes
-
-### Polish
-
-- [ ] UI theming
-- [ ] Audio pass
-- [ ] Performance optimization
-- [ ] Bug fixing
-- [ ] Playtesting
+> “EFFICIENCY IS MERCY.”  
+> “CLEARANCE GRANTED.”  
+> “ESCALATION APPROVED.”  
+> “YOU WERE REPLACED BEFORE YOU FAILED.”  
 
 ---
 
@@ -379,11 +385,4 @@ Structure prioritizes **maintainability over speed**.
 | 7   | Attack Implementation & Enemies | Allowed player attacking, added enemies and adjusted gameManager declaration, interactable door        |
 | 8   | Interaction & Improved Editor   | Added UI to the door interaction, cleaned up varius redundant code, massive editor upgrade (still WIP) |
 | 9   | Main Menu & Editor Change       | Converted editor into HTML/JS for ease of use, added main menu, began working on level swapping        |
-
----
-
-> - “NONCOMPLIANCE IS NEGLIGENCE.”
-> - “EVERY ACTION HAS A FILE.”
-> - “FUNCTION IS FREEDOM.”
-> - “THE SYSTEM REMEMBERS SO YOU DON’T HAVE TO.”
-> - “YOU ARE SAFE WHILE RECORDED.”
+| 10  | Major Genre Change and "Rebrand"| Removed editor (bye 4 hours), removed any other bloat, layed groundwork for new roguelike system       |

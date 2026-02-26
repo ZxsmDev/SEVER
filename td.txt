@@ -1,10 +1,8 @@
 Todo:
-  - implement account/login for admin use of level editor 
   - other states then game
   - adjust ramp collision trajectory
   - allow smooth descent down ramp
   - ramp gap collision detection
-  - level instance swapping
-  - level graph mapping and swapping
+  - convert level size to units to make procedural rooms easy
   - improved use of HUD
   - hazard implementation into collision (player hurtbox)

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="public/assets/favicon.ico" />
-    <title>Order is Mercy</title>
+    <title>GAME_NAME</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -12,32 +12,12 @@
       <canvas id="canvas"></canvas>
 
       <section id="menu" class="overlay">
-        <h1>Order is Mercy</h1>
+        <h1>GAME_NAME</h1>
         <button id="startButton">Start Game</button>
-        <select name="levelSelect" id="levelSelect">
-          <option value="0">Level 1</option>
-          <option value="1">Level 2</option>
-        </select>
-        <button id="editorButton">Level Editor</button>
-        <button id="credButton">Credits</button>
       </section>
     </main>
     </main>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const editorButton = document.getElementById("editorButton");
-
-        let adminMode = true; // Set to true to enable editor button, false to hide it
-
-        if (!adminMode) editorButton.style.display = "none";
-
-        editorButton.addEventListener(
-          "click",
-          () => (window.location.href = "editor.html"),
-        );
-      });
-    </script>
     <script type="module" src="src/main.js"></script>
   </body>
 </html>

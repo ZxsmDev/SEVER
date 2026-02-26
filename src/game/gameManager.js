@@ -1,6 +1,3 @@
-import testLevel00 from "../systems/level/data/levelTest00.json" with { type: "json" };
-import testLevel01 from "../systems/level/data/levelTest01.json" with { type: "json" };
-
 export default class GameManager {
   constructor(
     canvas, // HTMLCanvasElement
@@ -82,8 +79,8 @@ export default class GameManager {
 
     this.player = new this.PlayerClass(
       this,
-      spawn.x * this.level.scaleFactor,
-      spawn.y * this.level.scaleFactor,
+      spawn.x,
+      spawn.y,
       25, // Default width
       50, // Default height
     );
