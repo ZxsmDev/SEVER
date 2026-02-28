@@ -60,6 +60,7 @@ export default class Debug {
     this.lastFrameTime = performance.now();
   }
   drawTrajectory() {
+    return
     const player = this.game.player;
     const ctx = this.game.ctx;
 

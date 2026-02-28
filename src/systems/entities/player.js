@@ -36,18 +36,16 @@ export default class Player extends Entity {
 
     // Combat
     this.combat = {
-      damage: 10,
-      attackSpeed: 1,
-      attackDistance: 1.7,
-      defense: 5,
-      health: 100,
+      currentType: null,
+      ranged: { attackSpeed: 100, attackDistance: 15 },
+      melee: { attackSpeed: 300, attackDistance: 1.7, dirX: 1, dirY: 0 },
       modifiers: {
         damage: 0,
         defense: 0,
         health: 0,
       },
-      dirX: 1,
-      dirY: 0,
+      health: 100,
+      defense: 5,
       attacking: false,
     };
 
@@ -61,30 +59,30 @@ export default class Player extends Entity {
     if (this.combat.attacking) {
       this.game.ctx.fillStyle = "rgba(200, 100, 255, 0.5)";
       // HANDLE VERTICAL ATTACKS
-      if (this.combat.dirY === -1) {
+      if (this.combat.melee.dirY === -1) {
         // Upward attack
         this.game.ctx.fillRect(
           this.x - 10,
-          this.y - this.height * this.combat.attackDistance - 20,
+          this.y - this.height * this.combat.melee.attackDistance - 20,
           this.width + 20,
-          this.height * this.combat.attackDistance,
+          this.height * this.combat.melee.attackDistance,
         );
-      } else if (this.combat.dirY === 1) {
+      } else if (this.combat.melee.dirY === 1) {
         // Downward attack
         this.game.ctx.fillRect(
           this.x - 10,
           this.y + this.height + 20,
           this.width + 20,
-          this.height * this.combat.attackDistance,
+          this.height * this.combat.melee.attackDistance,
         );
       } else {
         // HORIZONTAL ATTACKS
         this.game.ctx.fillRect(
-          this.combat.dirX == 1
+          this.combat.melee.dirX == 1
             ? this.x + 20 + this.width
-            : this.x - this.width * 2 * this.combat.attackDistance - 20,
+            : this.x - this.width * 2 * this.combat.melee.attackDistance - 20,
           this.y - 10,
-          this.height * this.combat.attackDistance,
+          this.height * this.combat.melee.attackDistance,
           this.width + this.height / 2 + 20,
         );
       }
@@ -334,28 +332,44 @@ export default class Player extends Entity {
       }
     }
   }
-  attack() {
+  meleeAttack() {
     if (this.combat.attacking) return; // Prevent spamming attacks
 
     if (this.game.input.isDown(["ArrowUp", "KeyW"])) {
-      this.combat.dirY = -1;
-      this.combat.dirX = 0;
+      this.combat.melee.dirY = -1;
+      this.combat.melee.dirX = 0;
     } else if (this.game.input.isDown(["ArrowDown", "KeyS"])) {
-      this.combat.dirY = 1;
-      this.combat.dirX = 0;
+      this.combat.melee.dirY = 1;
+      this.combat.melee.dirX = 0;
     } else if (this.game.input.isDown(["ArrowLeft", "KeyA"])) {
-      this.combat.dirX = -1;
-      this.combat.dirY = 0;
+      this.combat.melee.dirX = -1;
+      this.combat.melee.dirY = 0;
     } else if (this.game.input.isDown(["ArrowRight", "KeyD"])) {
-      this.combat.dirX = 1;
-      this.combat.dirY = 0;
+      this.combat.melee.dirX = 1;
+      this.combat.melee.dirY = 0;
     } else {
       // Default to facing direction if no input
-      this.combat.dirX = this.facingX || 1; // Use last horizontal input as facing
-      this.combat.dirY = 0;
+      this.combat.melee.dirX = this.facingX || 1; // Use last horizontal input as facing
+      this.combat.melee.dirY = 0;
     }
 
     this.combat.attacking = true;
-    setTimeout(() => (this.combat.attacking = false), 400); // Attack duration
+    setTimeout(
+      () => (this.combat.attacking = false),
+      this.combat.melee.attackSpeed,
+    ); // Attack duration
+  }
+  rangedAttack(e) {
+    if (this.combat.attacking) return;
+
+    // Get mouse click position
+    let mouseX = e.clientX;
+    let mouseY = e.clientY;
+
+    this.combat.attacking = true;
+    setTimeout(
+      () => (this.combat.attacking = false),
+      this.combat.ranged.attackSpeed,
+    );
   }
 }

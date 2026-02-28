@@ -365,13 +365,6 @@ Optimized for portfolio visibility and code clarity.
 
 ---
 
-> “EFFICIENCY IS MERCY.”  
-> “CLEARANCE GRANTED.”  
-> “ESCALATION APPROVED.”  
-> “YOU WERE REPLACED BEFORE YOU FAILED.”  
-
----
-
 ## COMMIT HISTORY
 
 | #   | Commit                          | Description                                                                                            |
@@ -386,3 +379,4 @@ Optimized for portfolio visibility and code clarity.
 | 8   | Interaction & Improved Editor   | Added UI to the door interaction, cleaned up varius redundant code, massive editor upgrade (still WIP) |
 | 9   | Main Menu & Editor Change       | Converted editor into HTML/JS for ease of use, added main menu, began working on level swapping        |
 | 10  | Major Genre Change and "Rebrand"| Removed editor (bye 4 hours), removed any other bloat, layed groundwork for new roguelike system       |
+| 11  | Adjusted combat and interaction | Added ranged combat options (not done), changed interact ui to draw over following player position      |

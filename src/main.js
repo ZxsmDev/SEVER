@@ -34,37 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
   canvas.tabIndex = 0;
   canvas.focus();
 
-  // canvas.addEventListener("click", () => {
-  //   // Request pointer lock
-  //   canvas.requestPointerLock();
-  // });
-
-  document.addEventListener("pointerlockchange", lockChangeAlert);
-
-  function lockChangeAlert() {
-    if (document.pointerLockElement === canvas) {
-      console.log("The pointer lock status is now locked");
-      // Add mouse movement listener when locked
-      document.addEventListener("mousemove", updatePosition);
-    } else {
-      console.log("The pointer lock status is now unlocked");
-      // Remove mouse movement listener when unlocked
-      document.removeEventListener("mousemove", updatePosition);
-    }
-  }
-
-  function updatePosition(e) {
-    const movementX = e.movementX || 0;
-    const movementY = e.movementY || 0;
-
-    // Send to UI to create custom cursor movement
-    // For example, you could dispatch a custom event with the movement data
-    const cursorMoveEvent = new CustomEvent("cursorMove", {
-      detail: { movementX, movementY },
-    });
-    document.dispatchEvent(cursorMoveEvent);
-  }
-
   const gameManager = new GameManager(
     canvas,
     ctx,

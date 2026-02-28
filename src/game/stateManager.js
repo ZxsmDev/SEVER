@@ -4,7 +4,8 @@ export default class StateManager {
     this.states = {
       menu: {
         name: "MENU",
-        update: () => {
+        update: () => {},
+        render: () => {
           const startButton = document.getElementById("startButton");
           const menu = document.querySelector("section#menu");
           if (startButton) {
@@ -14,7 +15,6 @@ export default class StateManager {
             });
           }
         },
-        render: () => {},
       },
       game: {
         name: "RUNNING",
@@ -24,6 +24,8 @@ export default class StateManager {
           this.game.interaction.update(); // Update interactables (e.g. doors, switches) after level update for correct state
         },
         render: () => {
+          document.querySelector("section#menu").style.display = "none"
+
           this.game.camera.applyTransform(this.game.ctx); // Apply camera transform before rendering world
           this.game.level.renderGeometry(); // Draw level geometry (collision objects)
           this.game.level.renderEntities(); // Draw entities (player, enemies, projectiles)

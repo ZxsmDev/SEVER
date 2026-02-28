@@ -21,8 +21,8 @@ export default class Interaction {
         if (!interactable.interacted) {
           this.hover = {
             text: "[E] to interact",
-            worldX: interactable.x + interactable.width * 1.5,
-            worldY: interactable.y + interactable.height / 3,
+            worldX: this.game.player.x - this.game.player.width,
+            worldY: this.game.player.y - this.game.player.height / 2,
             interactable,
           };
         }
@@ -46,7 +46,7 @@ export default class Interaction {
 
     ctx.fillStyle = "rgba(0,0,0,0.6)";
     ctx.fillRect(
-      screenX - 6,
+      screenX - 10,
       screenY - 18,
       ctx.measureText(this.hover.text).width + 12,
       22,
