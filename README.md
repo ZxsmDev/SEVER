@@ -31,14 +31,11 @@
 
 **GAME_NAME** is a room-based 2D action roguelike built in HTML Canvas and vanilla JavaScript.
 
-Each run places you inside a procedurally assembled enforcement district controlled by a failing administrative regime. Your job is simple:
+Each run places you inside a procedurally assembled room. Your job is simple:
 
-Clear resistance.  
-Process anomalies.  
+Clear henchmen.  
+Eliminate the target.  
 Advance the sector.
-
-You will not finish the system.  
-You will escalate within it.
 
 ---
 
@@ -84,7 +81,7 @@ The system adapts to efficiency.
 
 ## CORE LOOP
 
-> Enter Run → Clear Combat Room → Choose Reward → Escalate Difficulty → Face Sector Boss → Extract → Permanent Unlocks
+> Enter Run → Clear Combat Room → Choose Reward → Escalate Difficulty → Face Boss → Extract → Permanent Unlocks
 
 ### Per Room
 
@@ -177,12 +174,12 @@ Each run consists of:
 
 ### In-Run Systems
 
-| System     | Description                                  |
-|------------|----------------------------------------------|
-| Integrity  | Player health                                |
-| Clearance  | Currency gained per room                     |
-| Directives | Run modifiers (buffs/debuffs)                |
-| Escalation | Global difficulty scaler                     |
+| Description                                  |
+|----------------------------------------------|
+| Player health                                |
+| Currency gained per room                     |
+| Run modifiers (buffs/debuffs)                |
+| Global difficulty scaler                     |
 
 ---
 
