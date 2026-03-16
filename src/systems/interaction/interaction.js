@@ -48,8 +48,8 @@ export default class Interaction {
     ctx.fillRect(
       screenX - 10,
       screenY - 18,
-      ctx.measureText(this.hover.text).width + 12,
-      22,
+      ctx.measureText(this.hover.text).width + 20,
+      24,
     );
     ctx.fillStyle = "white";
     ctx.font = "16px Arial";

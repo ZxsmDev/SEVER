@@ -8,7 +8,9 @@ export default class Debug {
   }
   render() {
     if (!this.on) return;
-    this.drawTrajectory();
+    this.drawDebugPlayer();
+    this.drawDebugEnemies();
+    this.drawHitboxes();
   }
   renderText() {
     if (!this.on) return;
@@ -59,13 +61,9 @@ export default class Debug {
 
     this.lastFrameTime = performance.now();
   }
-  drawTrajectory() {
-    return
+  drawDebugPlayer() {
     const player = this.game.player;
     const ctx = this.game.ctx;
-
-    const steps = 60;
-    const stepTime = 0.03;
 
     const dashEndX =
       player.dash.startX + player.dash.dirX * player.dash.distance;
@@ -84,16 +82,13 @@ export default class Debug {
     );
     ctx.stroke();
 
+    // ==============================
+    // DASH GHOST (static endpoint)
+    // ==============================
     if (player.dash.isDashing && !player.grounded) {
-      // ==============================
-      // DASH GHOST (STATIC ENDPOINT)
-      // ==============================
       ctx.fillStyle = "rgba(255, 255, 255, 0.25)";
       ctx.fillRect(dashEndX, dashEndY, player.width, player.height);
 
-      // ==============================
-      // DASH LINE (current > ghost)
-      // ==============================
       ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
       ctx.beginPath();
       ctx.moveTo(player.x + player.width / 2, player.y + player.height / 2);
@@ -102,103 +97,88 @@ export default class Debug {
     }
 
     // ==============================
-    // NORMAL TRAJECTORY (NO DASH)
+    // ATTACK BOX (static endpoint)
     // ==============================
-    if (!player.dash.isDashing || player.grounded) {
-      let x = player.x;
-      let y = player.y;
-      let vx = player.vx;
-      let vy = player.vy;
+    if (this.combat.attacking) {
+      this.game.ctx.fillStyle = "rgba(200, 100, 255, 0.5)";
 
-      // Build trajectory path and find first collision with interpolation
-      let impact = null; // {x, y}
-      let impactStep = -1;
-
-      let prevX = x;
-      let prevY = y;
-      for (let i = 0; i < steps; i++) {
-        vy += player.gravity * stepTime;
-        const nextX = x + vx * stepTime;
-        const nextY = y + vy * stepTime;
-
-        // Check collision with all platforms using swept step
-        for (let obj of this.game.level.collision.rects) {
-          // Simple AABB overlap at the next step
-          if (
-            nextX < obj.x + obj.width &&
-            nextX + player.width > obj.x &&
-            nextY < obj.y + obj.height &&
-            nextY + player.height > obj.y
-          ) {
-            // Prefer top-of-platform hits: check previous bottom vs platform top
-            const prevBottom = prevY + player.height;
-            const nextBottom = nextY + player.height;
-            if (prevBottom <= obj.y && nextBottom >= obj.y) {
-              // Interpolate between prev and next to find exact crossing of obj.y
-              const t = (obj.y - prevBottom) / (nextBottom - prevBottom || 1);
-              const ix = prevX + (nextX - prevX) * t;
-              const iy = prevY + (nextY - prevY) * t;
-              impact = { x: ix, y: iy };
-            } else {
-              // Fallback: use next position as impact
-              impact = { x: nextX, y: nextY };
-            }
-            impactStep = i;
-            break;
-          }
-        }
-        if (impact) break;
-
-        prevX = nextX;
-        prevY = nextY;
-        x = nextX;
-        y = nextY;
-      }
-
-      // Draw trajectory up to collision (or full path)
-      x = player.x;
-      y = player.y;
-      vx = player.vx;
-      vy = player.vy;
-
-      ctx.strokeStyle = "rgba(255, 0, 0, 0.7)";
-      ctx.beginPath();
-      ctx.moveTo(x + player.width / 2, y + player.height / 2);
-
-      const drawSteps = impact ? impactStep + 1 : steps;
-      for (let i = 0; i < drawSteps; i++) {
-        vy += player.gravity * stepTime;
-        x += vx * stepTime;
-        y += vy * stepTime;
-        ctx.lineTo(x + player.width / 2, y + player.height / 2);
-      }
-
-      // If impact exists draw final interpolated point to avoid jitter
-      if (impact) {
-        ctx.lineTo(impact.x + player.width / 2, impact.y + player.height / 2);
-      }
-
-      ctx.stroke();
-
-      // Draw collision indicator at impact
-      if (impact) {
-        if (vx > 0) {
-          // Moving right, hit left side of rect
-          impact.x = impact.x - player.width / 2 + 30;
-        }
-        if (vx < 0) {
-          // Moving left, hit right side of rect
-          impact.x = impact.x + player.width / 2 - 12;
-        }
-        if (vx === 0) {
-          // Vertical fall, center the impact
-          impact.x = impact.x - player.width / 2 + 21;
-        }
-        ctx.fillStyle = "rgba(255, 0, 0, 0.9)";
-        ctx.fillRect(impact.x, impact.y + player.height - 4, 8, 8);
-      }
+      // HORIZONTAL ATTACKS
+      this.game.ctx.fillRect(
+        this.combat.melee.dir == 1
+          ? this.x + 20 + this.width
+          : this.x - this.width * 2 * this.combat.melee.attackDistance - 20,
+        this.y - 10,
+        this.height * this.combat.melee.attackDistance,
+        this.width + this.height / 2 + 20
+      );
     }
   }
+  drawDebugEnemies() {
+    const ctx = this.game.ctx;
 
-  drawHitboxes(entityManager) {}
+    this.game.entityManager.entities.forEach((enemy) => {
+      // Player is last index in entities, don't draw debug
+      if (
+        enemy ==
+        this.game.entityManager.entities[
+          this.game.entityManager.entities.length - 1
+        ]
+      )
+        return;
+      // ==============================
+      // Velocity Vector (current)
+      // ==============================
+      ctx.strokeStyle = "rgba(0, 255, 0, 0.7)";
+      ctx.beginPath();
+      ctx.moveTo(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2);
+      ctx.lineTo(
+        enemy.x + enemy.width / 2 + enemy.vx * 0.1,
+        enemy.y + enemy.height / 2 + enemy.vy * 0.1
+      );
+      ctx.stroke();
+
+      // ==============================
+      // Target Position
+      // ==============================
+      ctx.fillStyle = "rgba(255, 230, 0, 0.5)";
+      ctx.beginPath();
+      ctx.arc(enemy.target, enemy.y + enemy.height / 2, 10, 0, 2 * Math.PI);
+      ctx.fill();
+
+      // ==============================
+      // Radial Sight
+      // ==============================
+      ctx.fillStyle = "rgba(0, 162, 255, 0.1)";
+      ctx.beginPath();
+      ctx.arc(
+        enemy.x + enemy.width / 2,
+        enemy.y + enemy.height / 2,
+        400,
+        0,
+        2 * Math.PI
+      );
+      ctx.fill();
+
+      // ==============================
+      // Debug Text
+      // ==============================
+      const text = enemy.seenPlayer ? "Moving to Attack" : "Patrolling";
+
+      ctx.fillStyle = "rgba(0,0,0,0.6)";
+      ctx.fillRect(
+        enemy.x - (ctx.measureText(text).width + 20) / 2 + enemy.width / 2,
+        enemy.y - 30,
+        ctx.measureText(text).width + 20,
+        24
+      );
+      ctx.fillStyle = "white";
+      ctx.font = "16px Arial";
+      ctx.fillText(
+        text,
+        enemy.x - (ctx.measureText(text).width + 20) / 2 + enemy.width / 2 + 10,
+        enemy.y - 12.5
+      );
+    });
+  }
+  drawHitboxes() {}
 }

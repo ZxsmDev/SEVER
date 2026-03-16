@@ -8,7 +8,6 @@ export default class Entity {
     this.vx = 0;
     this.vy = 0;
   }
-
   update() {
     this.x += this.vx * this.game.delta;
     this.y += this.vy * this.game.delta;

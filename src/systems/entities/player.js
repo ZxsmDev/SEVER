@@ -39,7 +39,7 @@ export default class Player extends Entity {
     this.combat = {
       currentType: null,
       ranged: { attackSpeed: 100, attackDistance: 15 },
-      melee: { attackSpeed: 300, attackDistance: 1.7, dirX: 1, dirY: 0 },
+      melee: { attackSpeed: 300, attackDistance: 1.7, dir: 1 },
       modifiers: {
         damage: 0,
         defense: 0,
@@ -56,38 +56,6 @@ export default class Player extends Entity {
   render() {
     this.game.ctx.fillStyle = "skyblue";
     this.game.ctx.fillRect(this.x, this.y, this.width, this.height);
-
-    if (this.combat.attacking) {
-      this.game.ctx.fillStyle = "rgba(200, 100, 255, 0.5)";
-      // HANDLE VERTICAL ATTACKS
-      if (this.combat.melee.dirY === -1) {
-        // Upward attack
-        this.game.ctx.fillRect(
-          this.x - 10,
-          this.y - this.height * this.combat.melee.attackDistance - 20,
-          this.width + 20,
-          this.height * this.combat.melee.attackDistance
-        );
-      } else if (this.combat.melee.dirY === 1) {
-        // Downward attack
-        this.game.ctx.fillRect(
-          this.x - 10,
-          this.y + this.height + 20,
-          this.width + 20,
-          this.height * this.combat.melee.attackDistance
-        );
-      } else {
-        // HORIZONTAL ATTACKS
-        this.game.ctx.fillRect(
-          this.combat.melee.dirX == 1
-            ? this.x + 20 + this.width
-            : this.x - this.width * 2 * this.combat.melee.attackDistance - 20,
-          this.y - 10,
-          this.height * this.combat.melee.attackDistance,
-          this.width + this.height / 2 + 20
-        );
-      }
-    }
   }
   update() {
     // Update facing based on the last horizontal key pressed

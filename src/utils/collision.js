@@ -29,6 +29,15 @@ export const Collision = {
     const dy = a.y - b.y;
     return Math.hypot(dx, dy) < a.r + b.r;
   },
+  checkPointCollision(pointX, pointY, rect) {
+    // Check if a point (pointX, pointY) is inside a rectangle (rect)
+    return (
+      pointX >= rect.x &&
+      pointX <= rect.x + rect.width &&
+      pointY >= rect.y &&
+      pointY <= rect.y + rect.height
+    );
+  },
   checkCollision(refCaller, refTarget, type = "rect", radius = 0) {
     // Determine the type of collision to check
     switch (type) {
