@@ -1,3 +1,5 @@
+<img src="/public/assets/sever.jpg" width="200" height="200" alt="SEVER LOGO">
+
 # SEVER
 
 > A fast-paced 2D action roguelike.
