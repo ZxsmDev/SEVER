@@ -9,19 +9,14 @@ export const Collision = {
     );
   },
   rampCollision(a, b) {
-    // Get the player's center X position
-    const playerCenterX = a.x + a.width / 2;
+    const baseCollider = { x: a.x + a.width / 2, y: a.y + a.height, radius: 50 };
+    let closest = b.getClosestPointOnSegment(baseCollider);
 
-    // Get the Y position of the ramp at the player's center X
-    const rampYAtPlayerX = b.getYAtX(playerCenterX);
+    let dx = baseCollider.x - closest.x;
+    let dy = baseCollider.y - closest.y;
+    let distance = Math.sqrt(dx * dx + dy * dy);
 
-    // Check if the player's bottom is on or near the ramp surface
-    return (
-      a.y + a.height >= rampYAtPlayerX && // Player's bottom is at or below the ramp
-      a.y + a.height <= rampYAtPlayerX + 10 && // Allow a small margin for ramp alignment
-      playerCenterX >= b.x && // Player is within the ramp's horizontal bounds
-      playerCenterX <= b.x + b.width
-    );
+    return distance < baseCollider.radius;
   },
   radialCollision(a, b) {
     // Calculate the distance between the centers of two circles
@@ -56,7 +51,7 @@ export const Collision = {
             x: refTarget.x + refTarget.width / 2,
             y: refTarget.y + refTarget.height / 2,
             r: radius,
-          }
+          },
         );
       default:
         return false;
@@ -72,7 +67,7 @@ export const Collision = {
     delta,
     collisionObjects,
     refCaller,
-    isPlayer = false
+    isPlayer = false,
   ) {
     //==========================================
     // HORIZONTAL
@@ -82,7 +77,7 @@ export const Collision = {
       switch (type) {
         case "rects": // Walls, floor, platforms
           for (let rect of objects) {
-            if (this.checkCollision(refCaller, rect, "rect")) {
+            if (this.checkCollision({ x, y, width, height }, rect, "rect")) {
               if (vx > 0) {
                 // Moving right, hit left side of rect
                 const callerRight = x + width;
@@ -107,7 +102,7 @@ export const Collision = {
           break;
         case "ramps":
           for (let ramp of objects) {
-            if (this.checkCollision(refCaller, ramp, "ramp")) {
+            if (this.checkCollision({ x, y, width, height }, ramp, "ramp")) {
               const rampY = ramp.getYAtX(x + width / 2);
               if (y + height >= rampY) {
                 y = rampY - height; // Align caller to ramp surface
@@ -133,7 +128,7 @@ export const Collision = {
       switch (type) {
         case "rects":
           for (let rect of objects) {
-            if (this.checkCollision(refCaller, rect, "rect")) {
+            if (this.checkCollision({ x, y, width, height }, rect, "rect")) {
               if (vy > 0) {
                 // Falling, check if hitting the top of the platform
                 const callerBottomBefore = y - vy * delta + height;
@@ -167,14 +162,14 @@ export const Collision = {
         switch (type) {
           case "rects":
             for (let rect of objects) {
-              if (this.checkCollision(refCaller, rect, "rect")) {
+              if (this.checkCollision({ x, y, width, height }, rect, "rect")) {
                 stillGrounded = true;
               }
             }
             break;
           case "ramps":
             for (let ramp of objects) {
-              if (this.checkCollision(refCaller, ramp, "ramp")) {
+              if (this.checkCollision({x, y, width, height}, ramp, "ramp")) {
                 stillGrounded = true;
               }
             }
@@ -186,5 +181,10 @@ export const Collision = {
         refCaller.grounded = false;
       }
     }
+
+    refCaller.x = x
+    refCaller.y = y
+    refCaller.vx = vx
+    refCaller.vy = vy
   },
 };

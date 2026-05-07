@@ -13,13 +13,33 @@ export class Rect {
 }
 
 export class Ramp {
-  constructor(x, y, width, height, direction, color) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
+  constructor(x1, y1, x2, y2, direction, color) {
+    this.x1 = x1;
+    this.y1 = y1;
+    this.x2 = x2;
+    this.y2 = y2;
     this.direction = direction; // "up" or "down"
-    this.color = color
+    this.color = color;
+  }
+  getClosestPointOnSegment(circle) {
+    let segmentLenSq = (this.x2 - this.x1) ** 2 + (this.y2 - this.y1) ** 2;
+
+    // If ramp is just a point
+    if (segmentLenSq === 0) return { x: this.x1, y: this.y1 };
+
+    // Calculate projection t of circle onto line
+    let t =
+      ((circle.x - this.x1) * (this.x2 - this.x1) +
+        (circle.y - this.y1) * (this.y2 - this.y1)) /
+      segmentLenSq;
+
+    // Clamp t to 0-1 to stay on the segment
+    t = Math.max(0, Math.min(1, t));
+
+    return {
+      x: this.x1 + t * (this.x2 - this.x1),
+      y: this.y1 + t * (this.y2 - this.y1),
+    };
   }
   getYAtX(x) {
     const relativeX = x - this.x;
@@ -32,13 +52,13 @@ export class Ramp {
     ctx.fillStyle = this.color;
     ctx.beginPath();
     if (this.direction === "up") {
-      ctx.moveTo(this.x, this.y + this.height);
-      ctx.lineTo(this.x + this.width, this.y + this.height);
-      ctx.lineTo(this.x + this.width, this.y);
+      ctx.moveTo(this.x1, this.y1);
+      ctx.lineTo(this.x2, this.y2);
+      ctx.lineTo(this.x2, this.y1);
     } else {
-      ctx.moveTo(this.x + this.width, this.y + this.height);
-      ctx.lineTo(this.x, this.y);
-      ctx.lineTo(this.x, this.y + this.height);
+      ctx.moveTo(this.x2, this.y1);
+      ctx.lineTo(this.x1, this.y2);
+      ctx.lineTo(this.x1, this.y1);
     }
     ctx.closePath();
     ctx.fill();

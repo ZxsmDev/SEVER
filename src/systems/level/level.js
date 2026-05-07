@@ -90,10 +90,10 @@ export default class Level {
           break;
         case "ramp":
           const ramp = new Ramp(
-            obj.x,
-            obj.y,
-            obj.width,
-            obj.height,
+            obj.x1,
+            obj.y1,
+            obj.x2,
+            obj.y2,
             obj.slope === 1 ? "up" : "down",
             this.color.ramp,
           );

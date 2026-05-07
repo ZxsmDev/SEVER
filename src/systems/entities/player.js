@@ -96,7 +96,7 @@ export default class Player extends Entity {
       this.game.delta,
       this.game.level.collision,
       this,
-      true
+      true,
     );
 
     //==========================================
@@ -301,7 +301,7 @@ export default class Player extends Entity {
             width: this.height * this.combat.melee.attackDistance,
             height: this.width + this.height / 2 + 20,
           },
-          enemy
+          enemy,
         )
       ) {
         enemy.damage(this.combat.melee.damage);
@@ -311,7 +311,7 @@ export default class Player extends Entity {
     this.combat.attacking = true;
     setTimeout(
       () => (this.combat.attacking = false),
-      this.combat.melee.attackSpeed
+      this.combat.melee.attackSpeed,
     );
   }
   rangedAttack(e) {
@@ -341,7 +341,7 @@ export default class Player extends Entity {
       px + dirX * 20,
       py + dirY * 20,
       10,
-      10
+      10,
     );
 
     bullet.vx = dirX * 1200;
@@ -352,7 +352,7 @@ export default class Player extends Entity {
     this.combat.attacking = true;
     setTimeout(
       () => (this.combat.attacking = false),
-      this.combat.ranged.attackSpeed
+      this.combat.ranged.attackSpeed,
     );
   }
   // TEMP DEVTOOL

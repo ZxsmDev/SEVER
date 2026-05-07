@@ -18,8 +18,9 @@ export default class UserInterface {
 
     // Render boon UI as HTML elements, not on the canvas, since they need to be interactive
     if (this.game.player.boons.available) {
-      const boonUI = new BoonUI();
-      boonUI.render(this.game.player.boons.list);
+      const boonUI = new BoonUI(this.game.player.boons.list);
+      boonUI.render();
+      boonUI.update();
     }
   }
 }
