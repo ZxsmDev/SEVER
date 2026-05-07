@@ -87,7 +87,6 @@ export default class GameManager {
 
     this.ctx.fillStyle = "black";
     this.ctx.font = "16px Arial";
-    this.stateManager.changeState(this.stateManager.states.game);
     this.gameLoop.start();
   }
   resizeCanvas() {

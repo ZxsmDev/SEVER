@@ -1,5 +1,5 @@
 {
-  "id": "structured_test_facility",
+  "id": "ac3ec802-8474-4103-9da1-13ee3f1edcf9",
   "size": { "width": 8000, "height": 3500 },
 
   "enemies": [
@@ -32,7 +32,7 @@
     { "type": "wall", "x": 0, "y": 0, "width": 50, "height": 3200 },
     {
       "type": "interactable",
-      "x": 0, 
+      "x": 0,
       "y": 3200,
       "width": 25,
       "height": 100,

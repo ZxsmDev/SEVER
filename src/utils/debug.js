@@ -2,6 +2,44 @@ export default class Debug {
   constructor(gameManager) {
     this.game = gameManager;
     this.on = true;
+
+    this.debugInfo = {
+      global: {
+        fps: [
+          "FPS:",
+          () =>
+            Math.round(1000 / (performance.now() - this.lastFrameTime || 16)),
+        ],
+        state: ["State:", () => this.game.stateManager.current.name],
+      },
+      level: {
+        uuid: ["UUID:", () => this.game.level.data.id],
+        geometryCount: [
+          "Geometry Objects:",
+          () => this.game.level.geometry.length,
+        ],
+        enemyCount: [
+          "Enemy Count:",
+          () => this.game.entityManager.characterEntities.length - 1,
+        ],
+      },
+      player: {
+        x: ["Player X:", () => this.game.player.x.toFixed(2)],
+        y: ["Player Y:", () => this.game.player.y.toFixed(2)],
+        vx: ["Velocity X:", () => this.game.player.vx.toFixed(3)],
+        vy: ["Velocity Y:", () => this.game.player.vy.toFixed(3)],
+        speed: ["Speed:", () => this.game.player.speed.toFixed(3)],
+        facing: [
+          "Facing:",
+          () => (this.game.player.facingX === 1 ? "Right" : "Left"),
+        ],
+        dash: ["Dash:", () => !this.game.player.dash.justDashed],
+        doubleJump: ["Double Jump:", () => !this.game.player.doubleJump.used],
+        grounded: ["Grounded:", () => this.game.player.grounded],
+        combatType: ["Combat Type:", () => this.game.player.combat.currentType],
+        attacking: ["Attacking:", () => this.game.player.combat.attacking],
+      },
+    };
   }
   toggle() {
     this.on = !this.on;
@@ -15,49 +53,22 @@ export default class Debug {
   renderText() {
     if (!this.on) return;
     const ctx = this.game.ctx;
+    let yOffset = 30;
 
-    ctx.fillStyle = "white";
-    ctx.fillText(
-      "FPS: " +
-        Math.round(1000 / (performance.now() - this.lastFrameTime || 16)),
-      15,
-      30,
-    );
-    ctx.fillText("Game State: " + this.game.stateManager.current.name, 15, 50);
-    ctx.fillText(
-      "Canvas Size: " + this.game.width + " x " + this.game.height,
-      15,
-      70,
-    );
-    ctx.fillText("Center X: " + this.game.centerX.toFixed(2), 15, 90);
-    ctx.fillText("Center Y: " + this.game.centerY.toFixed(2), 15, 110);
-
-    ctx.fillText("PLAYER", 15, 150);
-    ctx.fillText("Player X: " + this.game.player.x.toFixed(2), 15, 170);
-    ctx.fillText("Player Y: " + this.game.player.y.toFixed(2), 15, 190);
-    ctx.fillText("Velocity X: " + this.game.player.vx.toFixed(3), 15, 210);
-    ctx.fillText("Velocity Y: " + this.game.player.vy.toFixed(3), 15, 230);
-    ctx.fillText("Speed: " + this.game.player.speed.toFixed(3), 15, 250);
-    ctx.fillText("Grounded: " + this.game.player.grounded, 15, 270);
-    ctx.fillText("Double Jump: " + !this.game.player.doubleJump.used, 15, 290);
-    ctx.fillText("Dash: " + !this.game.player.dash.justDashed, 15, 310);
-
-    ctx.fillText("LEVEL", 15, 350);
-    ctx.fillText("ID: " + this.game.level.data.id, 15, 370);
-    ctx.fillText("Name: " + this.game.level.data.debug.name, 15, 390);
-    ctx.fillText(
-      "Geometry Objects: " + this.game.level.geometry.length,
-      15,
-      410,
-    );
-    ctx.fillText(
-      "Size: " +
-        this.game.level.data.size.width +
-        " x " +
-        this.game.level.data.size.height,
-      15,
-      430,
-    );
+    for (const category in this.debugInfo) {
+      const info = this.debugInfo[category];
+      yOffset += 10;
+      for (const key in info) {
+        const [label, valueFunc] = info[key];
+        const value = valueFunc();
+        const text = `${label} ${value}`;
+        ctx.fillStyle = "rgba(0,0,0,0.6)";
+        ctx.fillStyle = "white";
+        ctx.font = "16px Arial";
+        ctx.fillText(text, 20, yOffset);
+        yOffset += 20;
+      }
+    }
 
     this.lastFrameTime = performance.now();
   }
@@ -73,14 +84,36 @@ export default class Debug {
     // ==============================
     // VELOCITY VECTOR (current)
     // ==============================
+    const startX = player.x + player.width / 2;
+    const startY = player.y + player.height / 2;
+    const scale = 0.1;
+    const dx = player.vx * scale;
+    const dy = player.vy * scale;
+    const endX = startX + dx;
+    const endY = startY + dy;
+
     ctx.strokeStyle = "rgba(0, 255, 0, 0.7)";
     ctx.beginPath();
-    ctx.moveTo(player.x + player.width / 2, player.y + player.height / 2);
-    ctx.lineTo(
-      player.x + player.width / 2 + player.vx * 0.1,
-      player.y + player.height / 2 + player.vy * 0.1,
-    );
+    ctx.moveTo(startX, startY);
+    ctx.lineTo(endX, endY);
     ctx.stroke();
+
+    // Draw arrowhead
+    const arrowHeadSize = 10;
+    const angle = Math.atan2(dy, dx);
+    ctx.beginPath();
+    ctx.moveTo(endX, endY);
+    ctx.lineTo(
+      endX - arrowHeadSize * Math.cos(angle - Math.PI / 6),
+      endY - arrowHeadSize * Math.sin(angle - Math.PI / 6),
+    );
+    ctx.lineTo(
+      endX - arrowHeadSize * Math.cos(angle + Math.PI / 6),
+      endY - arrowHeadSize * Math.sin(angle + Math.PI / 6),
+    );
+    ctx.closePath();
+    ctx.fillStyle = "rgba(0, 255, 0, 0.7)";
+    ctx.fill();
 
     // ==============================
     // DASH GHOST (static endpoint)

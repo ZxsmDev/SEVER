@@ -25,7 +25,7 @@ export default class StateManager {
           this.game.interaction.update(); // Update interactables (e.g. doors, switches) after level update for correct state
         },
         render: () => {
-          // document.querySelector("section#menu").style.display = "none";
+          document.querySelector("section#menu").style.display = "none";
 
           this.game.camera.applyTransform(this.game.ctx); // Apply camera transform before rendering world
           this.game.level.renderGeometry(); // Draw level geometry (collision objects)
@@ -34,6 +34,27 @@ export default class StateManager {
 
           // Reset transform for UI overlay
           this.game.ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+          const cx = this.game.width / 2;
+          const cy = this.game.height / 2;
+          const innerRadius = this.game.width * 0.2;
+          const outerRadius = this.game.width * 0.6;
+
+          const gradient = this.game.ctx.createRadialGradient(
+            cx,
+            cy,
+            innerRadius,
+            cx,
+            cy,
+            outerRadius,
+          );
+
+          gradient.addColorStop(0, "rgba(0, 0, 0, 0)"); // Center: fully transparent
+          gradient.addColorStop(1, "rgba(0, 0, 0, 0.9)"); // Edges: dark shadow
+
+          this.game.ctx.fillStyle = gradient;
+          this.game.ctx.fillRect(0, 0, this.game.width, this.game.height);
+          
           this.game.debug.renderText();
           this.game.ui.render();
         },

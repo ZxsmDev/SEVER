@@ -46,8 +46,8 @@ export default class Player extends Entity {
         defense: 0,
         health: 0,
       },
-      health: 200,
-      maxHealth: 200,
+      health: 400,
+      maxHealth: 400,
       defense: 5,
       attacking: false,
       dead: false,
@@ -62,6 +62,23 @@ export default class Player extends Entity {
   render() {
     this.game.ctx.fillStyle = "skyblue";
     this.game.ctx.fillRect(this.x, this.y, this.width, this.height);
+
+    if (this.doubleJump.used) {
+      this.game.ctx.fillStyle = "rgba(0, 100, 225, 0.3)";
+      this.game.ctx.fillRect(
+        this.x + this.width / 6,
+        this.y + this.height,
+        (this.width / 3) * 2,
+        this.height  * 10,
+      );
+      this.game.ctx.fillStyle = "rgba(0, 100, 225, 0.3)";
+      this.game.ctx.fillRect(
+        this.x + this.width / 3,
+        this.y + this.height,
+        (this.width / 6) * 2,
+        this.height * 10,
+      );
+    }
   }
   update() {
     // Update facing based on the last horizontal key pressed

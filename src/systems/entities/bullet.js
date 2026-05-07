@@ -9,7 +9,7 @@ export default class Bullet extends Entity {
   }
   render() {
     const ctx = this.game.ctx;
-    ctx.fillStyle = "rgb(100, 0, 0)";
+    ctx.fillStyle = "rgb(175, 0, 0)";
     ctx.beginPath();
     ctx.arc(this.x, this.y, 5, 0, Math.PI * 2);
     ctx.fill();

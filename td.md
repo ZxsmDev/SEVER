@@ -1,7 +1,8 @@
 ## Todo:
   - pause state
-  - adjust ramp collision
+  - fix ramp collision
   - convert level size to units to make procedural rooms
+  - enemy combat
 
 ## MOST IMPORTANT:
 ### Proper GAMELOOP
@@ -16,7 +17,7 @@
   9. player enters new room (repeat 1-8)
   10. every 3-5 rooms (random?) player enters shop to spend orbs?
   
-### How to Implement
+### Things to Implement
   - enemy waves
   - player combat
   - currency manager
@@ -24,6 +25,4 @@
   - boss
   - upgrade shop
   - boon system
-
-## BUGS: 
-- High amount of bullets throttles performance and player input/movement
+  - player controls and feedback
