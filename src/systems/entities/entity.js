@@ -21,7 +21,7 @@ export default class Entity {
         console.log("Player is dead");
         return;
       }
-      console.log(`Enemy #${currentEntityIndex + 1} is dead`);
+      console.log(`Entity died`);
 
       const index = currentEntityIndex;
       if (index !== -1) {

@@ -1,16 +1,25 @@
 export default class BoonUI {
-  render() {
+  render(list) {
     const parent = document.getElementById("ui");
 
     const child = `
-      <h1>Boon</h1>
-      <ul>
-        <li><button class="boon">B1</button></li>
-        <li><button class="boon">B2</button></li>
-        <li><button class="boon">B3</button></li>
-      </ul>
+      <section id="boon-ui">
+        <h1>Boon</h1>
+        <ul>
+          ${list
+            .map(
+              (boon) => `
+            <button>
+              <h2>${boon.name}</h2>
+              <p>${boon.description}</p>
+            </button>
+          `
+            )
+            .join("")}
+        </ul>
+      </section>
       `;
 
-    parent.appendChild(child);
+    parent.innerHTML = child;
   }
 }

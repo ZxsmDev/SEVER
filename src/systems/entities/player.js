@@ -1,6 +1,5 @@
 import Entity from "./entity.js";
 import Bullet from "./bullet.js";
-import BoonUI from "../ui/boonUI.js";
 
 export default class Player extends Entity {
   constructor(gameManager, x, y, width, height) {
@@ -53,6 +52,11 @@ export default class Player extends Entity {
       dead: false,
     };
 
+    this.boons = {
+      available: false,
+      list: [],
+    };
+
     // Flags
     this.grounded = false;
 
@@ -65,25 +69,57 @@ export default class Player extends Entity {
 
     if (this.doubleJump.used) {
       this.game.ctx.fillStyle = "rgba(0, 100, 225, 0.3)";
-      this.game.ctx.fillRect(
-        this.x + this.width / 6,
-        this.y + this.height,
-        (this.width / 3) * 2,
-        this.height  * 10,
-      );
-      this.game.ctx.fillStyle = "rgba(0, 100, 225, 0.3)";
-      this.game.ctx.fillRect(
-        this.x + this.width / 3,
-        this.y + this.height,
-        (this.width / 6) * 2,
-        this.height * 10,
-      );
+      this.game.ctx.beginPath();
+      this.game.ctx.moveTo(this.x + this.width / 2, this.y + this.height * 1.5);
+      this.game.ctx.lineTo(this.x, this.y + this.height);
+      this.game.ctx.lineTo(this.x + this.width, this.y + this.height);
+      this.game.ctx.closePath();
+      this.game.ctx.fill();
     }
   }
   update() {
     // Update facing based on the last horizontal key pressed
     if (this.game.input.isDown(["ArrowLeft", "KeyA"])) this.facingX = -1;
     else if (this.game.input.isDown(["ArrowRight", "KeyD"])) this.facingX = 1;
+
+    this.dashing();
+
+    this.movement();
+
+    this.game.collision.moveAndCollide(
+      this.x,
+      this.y,
+      this.vx,
+      this.vy,
+      this.width,
+      this.height,
+      this.game.delta,
+      this.game.level.collision,
+      this,
+      true
+    );
+
+    //==========================================
+    // DEBUG KEYBINDS
+    //==========================================
+    if (this.game.input.isPressed(["Backslash", "Backquote"])) {
+      this.game.debug.toggle();
+    }
+
+    if (this.game.input.isPressed(["KeyQ"])) {
+      this.damage(10);
+    }
+
+    if (this.game.input.isPressed(["KeyT"])) {
+      this.combat.currentType =
+        this.combat.currentType == "ranged" ? "melee" : "ranged";
+    }
+
+    if (this.game.input.isPressed(["KeyB"])) {
+      this.debugActivateBoon();
+    }
+  }
+  dashing() {
     //==========================================
     // Dashing - Initiate
     //==========================================
@@ -152,7 +188,8 @@ export default class Player extends Entity {
     ) {
       this.dash.isDashing = false;
     }
-
+  }
+  movement() {
     //==========================================
     // Horizontal movement (only if not air dashing)
     //==========================================
@@ -201,29 +238,32 @@ export default class Player extends Entity {
     } else if (this.grounded) {
       this.doubleJump.used = false;
     }
-
-    this.moveAndCollide();
-
-    //==========================================
-    // DEBUG
-    //==========================================
-    if (this.game.input.isPressed(["Backslash", "Backquote"])) {
-      this.game.debug.toggle();
-    }
-
-    if (this.game.input.isPressed(["KeyQ"])) {
-      this.damage(10);
-    }
-
-    if (this.game.input.isPressed(["KeyT"])) {
-      this.combat.currentType =
-        this.combat.currentType == "ranged" ? "melee" : "ranged";
-    }
-
-    if (this.game.input.isPressed(["KeyB"])) {
-      this.debugActivateBoon();
-    }
   }
+  /* 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Combat manager 
+  */
   initCombatControls() {
     document.addEventListener("mousedown", (e) => {
       if (this.combat.currentType === "ranged") {
@@ -261,7 +301,7 @@ export default class Player extends Entity {
             width: this.height * this.combat.melee.attackDistance,
             height: this.width + this.height / 2 + 20,
           },
-          enemy,
+          enemy
         )
       ) {
         enemy.damage(this.combat.melee.damage);
@@ -271,7 +311,7 @@ export default class Player extends Entity {
     this.combat.attacking = true;
     setTimeout(
       () => (this.combat.attacking = false),
-      this.combat.melee.attackSpeed,
+      this.combat.melee.attackSpeed
     );
   }
   rangedAttack(e) {
@@ -301,7 +341,7 @@ export default class Player extends Entity {
       px + dirX * 20,
       py + dirY * 20,
       10,
-      10,
+      10
     );
 
     bullet.vx = dirX * 1200;
@@ -312,124 +352,34 @@ export default class Player extends Entity {
     this.combat.attacking = true;
     setTimeout(
       () => (this.combat.attacking = false),
-      this.combat.ranged.attackSpeed,
+      this.combat.ranged.attackSpeed
     );
-  }
-  moveAndCollide() {
-    const collision = this.game.collision;
-    const collisionObjects = this.game.level.collision;
-
-    //==========================================
-    // HORIZONTAL COLLISION
-    //==========================================
-    this.x += this.vx * this.game.delta;
-    Object.entries(collisionObjects).forEach(([type, objects]) => {
-      switch (type) {
-        case "rects":
-          for (let rect of objects) {
-            if (collision.checkCollision(this, rect, "rect")) {
-              if (this.vx > 0) {
-                // Moving right, hit left side of rect
-                const playerRight = this.x + this.width;
-                const rectLeft = rect.x;
-
-                if (playerRight > rectLeft) {
-                  this.x = rectLeft - this.width; // Align player's right side to rect's left side
-                  this.vx = 0; // Stop horizontal movement
-                }
-              } else if (this.vx < 0) {
-                // Moving left, hit right side of rect
-                const playerLeft = this.x;
-                const rectRight = rect.x + rect.width;
-
-                if (playerLeft < rectRight) {
-                  this.x = rectRight; // Align player's left side to rect's right side
-                  this.vx = 0; // Stop horizontal movement
-                }
-              }
-            }
-          }
-          break;
-
-        case "ramps":
-          for (let ramp of objects) {
-            if (collision.checkCollision(this, ramp, "ramp")) {
-              // Align player with ramp surface
-              const rampY = ramp.getYAtX(this.x + this.width / 2);
-              if (this.y + this.height >= rampY) {
-                this.y = rampY - this.height; // Align player to ramp surface
-                this.grounded = true; // Player is grounded
-                this.vy = 0; // Stop vertical velocity
-                this.dash.justDashed = false; // Reset dash state
-                this.doubleJump.canDoubleJump = true; // Reset double jump
-              }
-            }
-          }
-          break;
-      }
-    });
-
-    //==========================================
-    // VERTICAL
-    //==========================================
-    this.y += this.vy * this.game.delta;
-    Object.entries(collisionObjects).forEach(([type, objects]) => {
-      switch (type) {
-        case "rects":
-          for (let rect of objects) {
-            if (collision.checkCollision(this, rect, "rect")) {
-              if (this.vy > 0) {
-                // Falling, check if hitting the top of the platform
-                const playerBottomBefore =
-                  this.y - this.vy * this.game.delta + this.height;
-                if (playerBottomBefore <= rect.y) {
-                  this.y = rect.y - this.height; // Align player to the top of the platform
-                  this.grounded = true; // Player is grounded
-                  this.vy = 0; // Stop vertical velocity
-                  this.dash.justDashed = false; // Reset dash state
-                  this.doubleJump.canDoubleJump = true; // Reset double jump
-                }
-              } else if (this.vy < 0) {
-                // Jumping, check if hitting the bottom of the platform
-                this.y = rect.y + rect.height;
-                this.vy = 0; // Stop upward velocity
-                this.grounded = false;
-              }
-            }
-          }
-      }
-    });
-
-    if (this.grounded) {
-      this.y += 1;
-      let stillGrounded = false;
-      Object.entries(collisionObjects).forEach(([type, objects]) => {
-        switch (type) {
-          case "rects":
-            for (let rect of objects) {
-              if (collision.checkCollision(this, rect, "rect")) {
-                stillGrounded = true;
-              }
-            }
-            break;
-          case "ramps":
-            for (let ramp of objects) {
-              if (collision.checkCollision(this, ramp, "ramp")) {
-                stillGrounded = true;
-              }
-            }
-            break;
-        }
-      });
-      this.y -= 1;
-      if (!stillGrounded) {
-        this.grounded = false;
-      }
-    }
   }
   // TEMP DEVTOOL
   debugActivateBoon() {
-    let bui = new BoonUI();
-    bui.render();
+    this.boons = {
+      available: !this.boons.available,
+      list: [
+        {
+          name: "Damage Up",
+          description: "Increases your damage by 5.",
+          apply: () => (this.combat.modifiers.damage += 5),
+        },
+        {
+          name: "Defense Up",
+          description: "Increases your defense by 5.",
+          apply: () => (this.combat.modifiers.defense += 5),
+        },
+        {
+          name: "Health Up",
+          description: "Increases your max health by 20.",
+          apply: () => {
+            this.combat.modifiers.health += 20;
+            this.combat.maxHealth += 20;
+            this.combat.health += 20;
+          },
+        },
+      ],
+    };
   }
 }

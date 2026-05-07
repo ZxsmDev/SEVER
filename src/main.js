@@ -4,7 +4,7 @@ import GameLoop from "./game/gameLoop.js";
 import StateManager from "./game/stateManager.js";
 
 // Entity management and player class
-import EntityManager from "./systems/entities/entityManager.js";
+import EntityManager from "./systems/managers/entityManager.js";
 import Player from "./systems/entities/player.js";
 
 // Camera

@@ -92,7 +92,7 @@ export default class Debug {
     const endX = startX + dx;
     const endY = startY + dy;
 
-    ctx.strokeStyle = "rgba(0, 255, 0, 0.7)";
+    ctx.strokeStyle = "rgb(0, 255, 0)";
     ctx.beginPath();
     ctx.moveTo(startX, startY);
     ctx.lineTo(endX, endY);

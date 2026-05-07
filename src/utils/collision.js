@@ -56,10 +56,135 @@ export const Collision = {
             x: refTarget.x + refTarget.width / 2,
             y: refTarget.y + refTarget.height / 2,
             r: radius,
-          },
+          }
         );
       default:
         return false;
+    }
+  },
+  moveAndCollide(
+    x,
+    y,
+    vx,
+    vy,
+    width,
+    height,
+    delta,
+    collisionObjects,
+    refCaller,
+    isPlayer = false
+  ) {
+    //==========================================
+    // HORIZONTAL
+    //==========================================
+    x += vx * delta;
+    Object.entries(collisionObjects).forEach(([type, objects]) => {
+      switch (type) {
+        case "rects": // Walls, floor, platforms
+          for (let rect of objects) {
+            if (this.checkCollision(refCaller, rect, "rect")) {
+              if (vx > 0) {
+                // Moving right, hit left side of rect
+                const callerRight = x + width;
+                const rectLeft = rect.x;
+
+                if (callerRight > rectLeft) {
+                  x = rectLeft - width; // Align callers right side to rect's left side
+                  vx = 0; // Stop horizontal movement
+                }
+              } else if (vx < 0) {
+                // Moving left, hit right side of rect
+                const callerLeft = x;
+                const rectRight = rect.x + rect.width;
+
+                if (callerLeft < rectRight) {
+                  x = rectRight; // Align callers left side to rect's right side
+                  vx = 0; // Stop horizontal movement
+                }
+              }
+            }
+          }
+          break;
+        case "ramps":
+          for (let ramp of objects) {
+            if (this.checkCollision(refCaller, ramp, "ramp")) {
+              const rampY = ramp.getYAtX(x + width / 2);
+              if (y + height >= rampY) {
+                y = rampY - height; // Align caller to ramp surface
+                vy = 0; // Stop vertical velocity
+
+                if (isPlayer) {
+                  refCaller.grounded = true; // Player is grounded
+                  refCaller.dash.justDashed = false; // Reset dash state
+                  refCaller.doubleJump.canDoubleJump = true; // Reset double jump
+                }
+              }
+            }
+          }
+          break;
+      }
+    });
+
+    //==========================================
+    // VERTICAL
+    //==========================================
+    y += vy * delta;
+    Object.entries(collisionObjects).forEach(([type, objects]) => {
+      switch (type) {
+        case "rects":
+          for (let rect of objects) {
+            if (this.checkCollision(refCaller, rect, "rect")) {
+              if (vy > 0) {
+                // Falling, check if hitting the top of the platform
+                const callerBottomBefore = y - vy * delta + height;
+                if (callerBottomBefore <= rect.y) {
+                  y = rect.y - height; // Align caller to the top of the platform
+                  vy = 0; // Stop vertical velocity
+
+                  if (isPlayer) {
+                    refCaller.grounded = true; // Player is grounded
+                    refCaller.dash.justDashed = false; // Reset dash state
+                    refCaller.doubleJump.canDoubleJump = true; // Reset double jump
+                  }
+                }
+              } else if (vy < 0) {
+                // Jumping, check if hitting the bottom of the platform
+                y = rect.y + rect.height;
+                vy = 0; // Stop upward velocity
+
+                if (isPlayer) refCaller.grounded = false;
+              }
+            }
+          }
+      }
+    });
+
+    // Only for player:
+    if (isPlayer && refCaller.grounded) {
+      y += 1;
+      let stillGrounded = false;
+      Object.entries(collisionObjects).forEach(([type, objects]) => {
+        switch (type) {
+          case "rects":
+            for (let rect of objects) {
+              if (this.checkCollision(refCaller, rect, "rect")) {
+                stillGrounded = true;
+              }
+            }
+            break;
+          case "ramps":
+            for (let ramp of objects) {
+              if (this.checkCollision(refCaller, ramp, "ramp")) {
+                stillGrounded = true;
+              }
+            }
+            break;
+        }
+      });
+      y -= 1;
+      if (!stillGrounded) {
+        refCaller.grounded = false;
+      }
     }
   },
 };
